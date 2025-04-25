@@ -20,8 +20,9 @@ var
 
 implementation
 
-
 {$R *.lfm}
+
+uses qoa;
 
 end.
 

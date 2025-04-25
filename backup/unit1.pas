@@ -5,7 +5,7 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs;
+  cmem, Classes, SysUtils, Forms, Controls, Graphics, Dialogs;
 
 type
   TForm1 = class(TForm)
@@ -20,9 +20,9 @@ var
 
 implementation
 
-uses cmem;
-
 {$R *.lfm}
+
+uses qoa;
 
 end.
 

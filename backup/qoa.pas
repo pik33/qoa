@@ -5,7 +5,7 @@ unit qoa;
 interface
 
 uses
-  Classes, SysUtils;
+ SysUtils;
 
 // Pascal translation by Piotr Kardasz, pik33@o2.pl
 
@@ -111,8 +111,6 @@ QOA predicts each audio sample based on the previously decoded ones using a
 dequantized residual forms the final output sample.
 
 }
-//* -----------------------------------------------------------------------------
-//	Header - Public functions */
 
 const
  QOA_MIN_FILESIZE=16;
@@ -139,6 +137,7 @@ type qoa_desc=record
         lms:array[0..QOA_MAX_CHANNELS-1] of qoa_lms_t;
         error:double;
 	end;
+
 type Pqoa_desc=^qoa_desc;
 
 
@@ -155,24 +154,12 @@ function qoa_read(filename:Pchar; qoa:Pqoa_desc):pointer;
 
 implementation
 
-uses cmem;
 
-{$R *.lfm}
-
-
-
-
-
-
-
-
-//* -----------------------------------------------------------------------------
-//	Implementation */
 
 function QOA_MALLOC(sz:cardinal):pointer; inline;
-begin result:=malloc(sz); end;
+begin result:=getmrm(sz); end;
 procedure QOA_FREE(p:pointer); inline;
-begin free(p);end;
+begin freemem(p);end;
 
 function QOA_FRAME_SIZE(channels, slices:integer):integer;
 
@@ -728,7 +715,7 @@ var f:integer;
     data:pbyte;
     sample_data:psmallint;
 
- begin
+begin
 f := fileopen(filename, fmOpenRead);
 if f<=0 then exit(nil);
 size:=fileseek(f,0,fsFromEnd);

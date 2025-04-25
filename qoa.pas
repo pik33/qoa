@@ -5,7 +5,7 @@ unit qoa;
 interface
 
 uses
-  Classes, SysUtils;
+ SysUtils;
 
 // Pascal translation by Piotr Kardasz, pik33@o2.pl
 
@@ -137,6 +137,7 @@ type qoa_desc=record
         lms:array[0..QOA_MAX_CHANNELS-1] of qoa_lms_t;
         error:double;
 	end;
+
 type Pqoa_desc=^qoa_desc;
 
 
@@ -153,12 +154,12 @@ function qoa_read(filename:Pchar; qoa:Pqoa_desc):pointer;
 
 implementation
 
-uses cmem;
+
 
 function QOA_MALLOC(sz:cardinal):pointer; inline;
-begin result:=malloc(sz); end;
+begin result:=getmem(sz); end;
 procedure QOA_FREE(p:pointer); inline;
-begin free(p);end;
+begin freemem(p);end;
 
 function QOA_FRAME_SIZE(channels, slices:integer):integer;
 
