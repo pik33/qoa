@@ -157,7 +157,7 @@ implementation
 
 
 function QOA_MALLOC(sz:cardinal):pointer; inline;
-begin result:=getmrm(sz); end;
+begin result:=getmem(sz); end;
 procedure QOA_FREE(p:pointer); inline;
 begin freemem(p);end;
 
@@ -423,16 +423,16 @@ for sample_index := 0 to (frame_len div QOA_SLICE_LEN)-1 do
   for c := 0 to channels-1 do
     begin
     slice_len := qoa_clamp(QOA_SLICE_LEN, 0, frame_len - si2);
-    slice_start := sample_index * QOA_SLICE_LEN * channels + c;
-    slice_end := (sample_index*QOA_SLICE_LEN + slice_len) * channels + c;
+    slice_start := si2 * channels + c;
+    slice_end := (si2 + slice_len) * channels + c;
 
     // Brute force search for the best scalefactor. Just go through all
     // 16 scalefactors, encode all samples for the current slice and
     // meassure the total squared error.
 
 
-    best_rank :=  18446744073709551615;
-    best_error := 18446744073709551615;
+    best_rank :=  -1; //18446744073709551615;
+    best_error := -1; //18446744073709551615;
     best_slice := 0;
     best_scalefactor := 0;
     for sfi := 0 to 15 do
@@ -698,7 +698,8 @@ var size:cardinal;
     f:integer;
 
 begin
-f := fileopen(filename, fmOpenWrite);
+f:= filecreate(filename);
+//f := fileopen(filename, fmOpenWrite);
 if f<=0 then exit(0);
 encoded := qoa_encode(sample_data, qoa, @size);
 if encoded=nil then begin fileclose(f); exit(0); end;

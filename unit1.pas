@@ -5,10 +5,18 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
 
 type
+
+  { TForm1 }
+
   TForm1 = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    OpenDialog1: TOpenDialog;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
 
   public
@@ -89,9 +97,10 @@ end;
 
 function qoaconv_wav_write(path:Pchar; sample_data: PSmallint; desc:Pqoa_desc):integer;
 
-var data_size,samplerate:cardinal;
+var data_size, ds2,samplerate:cardinal;
     channels,bits_per_sample:word;
     fh:integer;
+    s:Pchar;
 
 begin
 data_size := desc^.samples * desc^.channels * sizeof(smallint);
@@ -102,11 +111,13 @@ channels := desc^.channels;
 	//* Lifted from https://www.jonolick.com/code.html - public domain
 	//Made endian agnostic using qoaconv_fwrite() */
 
-fh := fileopen(path, fmopenwrite);
+fh := filecreate(path);
 //	QOACONV_ASSERT(fh, "Can't open %s for writing", path);
 filewrite(fh,'RIFF',4);
-qoaconv_fwrite_u32_le(data_size + 44 - 8, fh);
-filewrite(fh,'WAVEfmt '+#16+#0+#0+#0+#1+#0, 14);
+ds2:=data_size+44-8;
+qoaconv_fwrite_u32_le(ds2,fh);
+s:='WAVEfmt '+#16+#0+#0+#0+#1+#0;
+filewrite(fh, s^, 14);
 qoaconv_fwrite_u16_le(channels, fh);
 qoaconv_fwrite_u32_le(samplerate, fh);
 qoaconv_fwrite_u32_le(channels * samplerate * bits_per_sample div 8, fh);
@@ -123,7 +134,7 @@ function qoaconv_wav_read(path:PChar; desc: Pqoa_desc):Psmallint;
 
 var fh:integer;
     buf:array[0..43] of byte;
-    buf2: array[0..21] of word;
+    buf2: array[0..21] of word absolute buf;
     buf3:array[0..10] of cardinal absolute buf;
     spl:Psmallint;
 
@@ -138,6 +149,7 @@ desc^.channels := buf2[11];
 spl:=getmem(buf3[10]);
 fileread(fh,spl^,buf3[10]);
 result:=spl;
+fileclose(fh);
 end;
 
 
@@ -163,6 +175,18 @@ bytes_written:cardinal;
 begin
 sample_data := qoa_read(pchar(filename), @desc);
 bytes_written := qoaconv_wav_write(pchar(filename+'.wav'), sample_data, @desc);
+end;
+
+{ TForm1 }
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  if opendialog1.execute then encode(opendialog1.filename);
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  if opendialog1.execute then decode(opendialog1.filename);
 end;
 
 
