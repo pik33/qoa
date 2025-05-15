@@ -259,7 +259,7 @@ the history. This, surprisingly, is sufficient to get worthwhile predictions.
 This is all done with fixed point integers. Hence the right-shifts when updating
 the weights and calculating the prediction. }
 
-function qoa_lms_predict(lms:Pqoa_lms_t):integer; inline;
+function qoa_lms_predict(lms:Pqoa_lms_t):integer;
 
 var prediction:integer=0;
     i:integer;
@@ -270,7 +270,7 @@ result:=prediction shr 13;
 end;
 
 
-procedure qoa_lms_update(lms:Pqoa_lms_t; sample,residual:integer); inline;
+procedure qoa_lms_update(lms:Pqoa_lms_t; sample,residual:integer);
 
 var delta,i:integer;
 
@@ -289,7 +289,7 @@ returns as 0, which is handled in the qoa_quant_tab[].
 qoa_div() takes an index into the .16 fixed point qoa_reciprocal_tab as an
 argument, so it can do the division with a cheaper integer multiplication. }
 
-function qoa_div(v,scalefactor:integer):integer;inline;
+function qoa_div(v,scalefactor:integer):integer;
 
 var reciprocal,n,v1,v2,n1,n2:integer;
 
@@ -305,7 +305,7 @@ n := n + (v1-v2) - (n1-n2); //* round away from 0 */
 result:=n;
 end;
 
-function qoa_clamp(v,min,max:integer):integer; inline;
+function qoa_clamp(v,min,max:integer):integer;
 
 begin
 result:=v;
@@ -318,7 +318,7 @@ performance quite a bit. The extra if() statement works nicely with the CPUs
 branch prediction as this branch is rarely taken.}
 
 
-function qoa_clamp_s16(v:integer):integer; inline;
+function qoa_clamp_s16(v:integer):integer;
 
 begin
         result:=v;
@@ -478,7 +478,7 @@ for sample_index := 0 to (frame_len div QOA_SLICE_LEN)-1 do
 	error_sq := error * error;
         current_rank += error_sq + weights_penalty * weights_penalty;
 	current_error += error_sq;
-	if (current_rank > best_rank) then break;
+	if (current_rank > best_rank) then continue;
 	qoa_lms_update(@lms, reconstructed, dequantized);
 	slice := (slice shl 3) or quantized;
 	end;
