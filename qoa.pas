@@ -125,8 +125,8 @@ const
 
 
 type qoa_lms_t=record
-	history:array[0..QOA_LMS_LEN-1] of integer;
-	weights:array[0..QOA_LMS_LEN-1] of integer;
+	history:array[0..QOA_LMS_LEN-1] of smallint;
+	weights:array[0..QOA_LMS_LEN-1] of smallint;
         end;
 type Pqoa_lms_t=^qoa_lms_t;
 
@@ -261,12 +261,13 @@ the weights and calculating the prediction. }
 
 function qoa_lms_predict(lms:Pqoa_lms_t):integer;
 
-var prediction:integer=0;
+var prediction:integer;
     i:integer;
 
 begin
+prediction:=0;
 for i := 0 to QOA_LMS_LEN do prediction += lms^.weights[i] * lms^.history[i];
-result:=prediction shr 13;
+result:=prediction div 8192;
 end;
 
 
@@ -275,7 +276,7 @@ procedure qoa_lms_update(lms:Pqoa_lms_t; sample,residual:integer);
 var delta,i:integer;
 
 begin
-delta := residual shr 4;
+delta := residual div 16;
 for i := 0 to QOA_LMS_LEN-1 do
   if lms^.history[i] < 0 then lms^.weights[i] -= delta else lms^.weights[i] +=delta;
 for i := 0 to QOA_LMS_LEN-2 do lms^.history[i] := lms^.history[i+1];
@@ -295,7 +296,7 @@ var reciprocal,n,v1,v2,n1,n2:integer;
 
 begin
 reciprocal := qoa_reciprocal_tab[scalefactor];
-n := (v * reciprocal + (1 shl 15)) shr 16;
+n := (v * reciprocal + (1 shl 15)) div 65536;
 if v>0 then v1:=1 else v1:=0;
 if v<0 then v2:=1 else v2:=0;
 if n>0 then n1:=1 else n1:=0;
@@ -321,12 +322,9 @@ branch prediction as this branch is rarely taken.}
 function qoa_clamp_s16(v:integer):integer;
 
 begin
-        result:=v;
-	if cardinal(v + 32768) > 65535 then
-                begin
-		if (v < -32768) then result:=-32768;
-		if (v >  32767) then result:=32767;
-                end;
+result:=v;
+if (v < -32768) then result:=-32768;
+if (v >  32767) then result:=32767;
 end;
 
 
@@ -472,7 +470,7 @@ for sample_index := 0 to (frame_len div QOA_SLICE_LEN)-1 do
 	lms.weights[1] * lms.weights[1] +
 	lms.weights[2] * lms.weights[2] +
 	lms.weights[3] * lms.weights[3]
-	) shr 18) - $8ff;
+	) div 262144) - $8ff;
 	if (weights_penalty < 0) then weights_penalty := 0;
 	error := (sample - reconstructed);
 	error_sq := error * error;

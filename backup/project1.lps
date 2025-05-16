@@ -10,7 +10,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <CursorPos X="3" Y="12"/>
-        <UsageCount Value="36"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -22,7 +22,7 @@
         <UnitName Value="Unit1"/>
         <TopLine Value="133"/>
         <CursorPos Y="164"/>
-        <UsageCount Value="36"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -32,16 +32,16 @@
         <EditorIndex Value="4"/>
         <TopLine Value="588"/>
         <CursorPos Y="610"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="19"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="qoa.pas"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="448"/>
-        <CursorPos X="63" Y="333"/>
-        <UsageCount Value="17"/>
+        <TopLine Value="244"/>
+        <CursorPos X="15" Y="268"/>
+        <UsageCount Value="19"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -49,130 +49,130 @@
         <EditorIndex Value="3"/>
         <TopLine Value="177"/>
         <CursorPos X="10" Y="199"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="459" TopLine="446"/>
+        <Caret Line="647" TopLine="617"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="460" TopLine="446"/>
+        <Caret Line="323" TopLine="300"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="461" TopLine="446"/>
+        <Caret Line="324" TopLine="300"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="462" TopLine="446"/>
+        <Caret Line="325" TopLine="300"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="463" TopLine="446"/>
+        <Caret Line="326" TopLine="300"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="464" TopLine="446"/>
+        <Caret Line="327" TopLine="300"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="471" TopLine="446"/>
+        <Caret Line="648" TopLine="627"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="472" TopLine="446"/>
+        <Caret Line="649" TopLine="627"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="471" TopLine="446"/>
+        <Caret Line="650" TopLine="627"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="473" TopLine="446"/>
+        <Caret Line="277" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="472" TopLine="446"/>
+        <Caret Line="278" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="474" TopLine="446"/>
+        <Caret Line="279" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="470" TopLine="446"/>
+        <Caret Line="280" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="475" TopLine="446"/>
+        <Caret Line="279" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="470" TopLine="446"/>
+        <Caret Line="280" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="476" TopLine="446"/>
+        <Caret Line="279" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="477" TopLine="446"/>
+        <Caret Line="280" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="478" TopLine="446"/>
+        <Caret Line="279" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="479" TopLine="446"/>
+        <Caret Line="280" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="480" TopLine="446"/>
+        <Caret Line="279" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="481" TopLine="446"/>
+        <Caret Line="281" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="482" TopLine="446"/>
+        <Caret Line="282" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="483" TopLine="447"/>
+        <Caret Line="283" TopLine="254"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="454" TopLine="446"/>
+        <Caret Line="651" TopLine="630"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="456" TopLine="446"/>
+        <Caret Line="652" TopLine="630"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="457" TopLine="446"/>
+        <Caret Line="644" TopLine="630"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="458" TopLine="446"/>
+        <Caret Line="267" TopLine="244"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="459" TopLine="446"/>
+        <Caret Line="264" TopLine="244"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="460" TopLine="446"/>
+        <Caret Line="268" TopLine="244"/>
       </Position>
       <Position>
         <Filename Value="qoa.pas"/>
-        <Caret Line="461" TopLine="446"/>
+        <Caret Line="269" TopLine="244"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -180,4 +180,16 @@
       <Modes ActiveMode=""/>
     </RunParams>
   </ProjectSession>
+  <Debugging>
+    <BreakPoints>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Expression Value="reconstructed>32000"/>
+        <Source Value="qoa.pas"/>
+        <Line Value="648"/>
+      </Item>
+    </BreakPoints>
+  </Debugging>
 </CONFIG>
