@@ -14,6 +14,8 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
     OpenDialog1: TOpenDialog;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -188,6 +190,8 @@ procedure TForm1.Button2Click(Sender: TObject);
 begin
   if opendialog1.execute then decode(opendialog1.filename);
 end;
+
+
 
 
 

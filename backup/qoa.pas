@@ -125,8 +125,8 @@ const
 
 
 type qoa_lms_t=record
-	history:array[0..QOA_LMS_LEN-1] of smallint;
-	weights:array[0..QOA_LMS_LEN-1] of smallint;
+	history:array[0..QOA_LMS_LEN-1] of integer;
+	weights:array[0..QOA_LMS_LEN-1] of integer;
         end;
 type Pqoa_lms_t=^qoa_lms_t;
 
@@ -261,21 +261,26 @@ the weights and calculating the prediction. }
 
 function qoa_lms_predict(lms:Pqoa_lms_t):integer;
 
-var prediction:integer=0;
+var prediction:integer;
     i:integer;
 
 begin
-for i := 0 to QOA_LMS_LEN do prediction += lms^.weights[i] * lms^.history[i];
-result:=prediction div 8192;
+prediction:=0;
+for i := 0 to QOA_LMS_LEN-1 do
+   prediction += lms^.weights[i] * lms^.history[i];
+prediction:=prediction >> 13;
+//if prediction<0 then prediction -=1;
+result:=prediction;
 end;
 
 
 procedure qoa_lms_update(lms:Pqoa_lms_t; sample,residual:integer);
 
-var delta,i:integer;
+var i:integer;
+    delta:smallint;
 
 begin
-delta := residual div 16;
+delta := (residual >> 4) and $FFFF;
 for i := 0 to QOA_LMS_LEN-1 do
   if lms^.history[i] < 0 then lms^.weights[i] -= delta else lms^.weights[i] +=delta;
 for i := 0 to QOA_LMS_LEN-2 do lms^.history[i] := lms^.history[i+1];
