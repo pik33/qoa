@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 50
+  Left = 61
   Height = 240
-  Top = 170
+  Top = 261
   Width = 320
   Caption = 'Form1'
   ClientHeight = 240
@@ -24,20 +24,6 @@ object Form1: TForm1
     Caption = 'Decode'
     TabOrder = 1
     OnClick = Button2Click
-  end
-  object Label1: TLabel
-    Left = 141
-    Height = 15
-    Top = 24
-    Width = 34
-    Caption = 'Label1'
-  end
-  object Label2: TLabel
-    Left = 208
-    Height = 15
-    Top = 24
-    Width = 34
-    Caption = 'Label2'
   end
   object OpenDialog1: TOpenDialog
     Left = 125

@@ -295,11 +295,14 @@ argument, so it can do the division with a cheaper integer multiplication. }
 
 function qoa_div(v,scalefactor:integer):integer;
 
-var reciprocal,n,v1,v2,n1,n2:integer;
+var reciprocal,v1,v2,n1,n2,n:integer;
+    n3:int64;
 
 begin
 reciprocal := qoa_reciprocal_tab[scalefactor];
-n := (v * reciprocal + (1 shl 15)) div 65536;
+n3 := (v * reciprocal + (1 << 15)) >> 16;
+n:=n3 and $FFFFFFFF;
+
 if v>0 then v1:=1 else v1:=0;
 if v<0 then v2:=1 else v2:=0;
 if n>0 then n1:=1 else n1:=0;
@@ -389,8 +392,6 @@ slices := (frame_len + QOA_SLICE_LEN - 1) div QOA_SLICE_LEN;
 frame_size := QOA_FRAME_SIZE(channels, slices);
 for i:=0 to QOA_MAX_CHANNELS-1 do prev_scalefactor[i]:=0;
 
-// Write the frame header
-
 qoa_write_u64((
 		qoa_uint64_t(qoa^.channels)   shl 56 or
 		qoa_uint64_t(qoa^.samplerate) shl 32 or
@@ -401,8 +402,6 @@ qoa_write_u64((
 
 for c := 0 to channels-1 do
   begin
-
-  // Write the current LMS state */
   weights := 0;
   history := 0;
   for i := 0 to QOA_LMS_LEN-1 do
@@ -414,96 +413,95 @@ for c := 0 to channels-1 do
   qoa_write_u64(weights, bytes, @p);
   end;
 
-// We encode all samples with the channels interleaved on a slice level.
-// E.g. for stereo: (ch-0, slice 0), (ch 1, slice 0), (ch 0, slice 1), ...
-
-si2:=-QOA_SLICE_LEN; // helper var for sample_index for c translated loop
-for sample_index := 0 to (frame_len div QOA_SLICE_LEN)-1 do
-  begin
-  si2+=QOA_SLICE_LEN;
+sample_index:=0;
+repeat
   for c := 0 to channels-1 do
     begin
-    slice_len := qoa_clamp(QOA_SLICE_LEN, 0, frame_len - si2);
-    slice_start := si2 * channels + c;
-    slice_end := (si2 + slice_len) * channels + c;
+    slice_len := qoa_clamp(QOA_SLICE_LEN, 0, frame_len - sample_index);
+    slice_start := sample_index * channels + c;
+    slice_end := (sample_index + slice_len) * channels + c;
 
-    // Brute force search for the best scalefactor. Just go through all
-    // 16 scalefactors, encode all samples for the current slice and
-    // meassure the total squared error.
-
-
-    best_rank :=  -1; //18446744073709551615;
-    best_error := -1; //18446744073709551615;
+    			///* Brute force search for the best scalefactor. Just go through all
+    			//16 scalefactors, encode all samples for the current slice and
+    			//meassure the total squared error. */
+    best_rank := -1;
+    best_error := -1;
     best_slice := 0;
     best_scalefactor := 0;
     for sfi := 0 to 15 do
-				//* There is a strong correlation between the scalefactors of
-				// neighboring slices. As an optimization, start testing
-				// the best scalefactor of the previous slice first. */
       begin
+
+    				///* There is a strong correlation between the scalefactors of
+    				//neighboring slices. As an optimization, start testing
+    				//the best scalefactor of the previous slice first. */
+
       scalefactor := (sfi + prev_scalefactor[c]) mod 16;
 
-				//* We have to reset the LMS state to the last known good one
-				//before trying each scalefactor, as each pass updates the LMS
-				//state when encoding. */
+    				///* We have to reset the LMS state to the last known good one
+    				//before trying each scalefactor, as each pass updates the LMS
+    				//state when encoding. */
+
       lms := qoa^.lms[c];
       slice := scalefactor;
       current_rank := 0;
       current_error := 0;
-
-      si3:=-channels;
-      for si := slice_start to (slice_end div channels)-1 do
-        begin
-        si3+=channels;
-        sample := sample_data[si3];
-	predicted := qoa_lms_predict(@lms);
+      si:=slice_start;
+      repeat
+        sample := sample_data[si];
+    	predicted := qoa_lms_predict(@lms);
         residual := sample - predicted;
-	scaled := qoa_div(residual, scalefactor);
-	clamped := qoa_clamp(scaled, -8, 8);
-	quantized := qoa_quant_tab[clamped + 8];
-	dequantized := qoa_dequant_tab[scalefactor][quantized];
-	reconstructed := qoa_clamp_s16(predicted + dequantized);
+    	scaled := qoa_div(residual, scalefactor);
+    	clamped := qoa_clamp(scaled, -8, 8);
+    	quantized := qoa_quant_tab[clamped + 8];
+    	dequantized := qoa_dequant_tab[scalefactor][quantized];
+    	reconstructed := qoa_clamp_s16(predicted + dequantized);
 
+    					///* If the weights have grown too large, we introduce a penalty
+    					//here. This prevents pops/clicks in certain problem cases */
 
-					//* If the weights have grown too large, we introduce a penalty
-					//here. This prevents pops/clicks in certain problem cases */
-
-	weights_penalty := ((
-	lms.weights[0] * lms.weights[0] +
-	lms.weights[1] * lms.weights[1] +
-	lms.weights[2] * lms.weights[2] +
-	lms.weights[3] * lms.weights[3]
-	) div 262144) - $8ff;
-	if (weights_penalty < 0) then weights_penalty := 0;
-	error := (sample - reconstructed);
-	error_sq := error * error;
+    	weights_penalty := ((lms.weights[0] * lms.weights[0] +
+    			    lms.weights[1] * lms.weights[1] +
+    			    lms.weights[2] * lms.weights[2] +
+    			    lms.weights[3] * lms.weights[3]
+    			    ) div 262144 ) - $8ff;
+    	if (weights_penalty < 0) then weights_penalty := 0;
+        error := (sample - reconstructed);
+    	error_sq := error * error;
         current_rank += error_sq + weights_penalty * weights_penalty;
-	current_error += error_sq;
-	if (current_rank > best_rank) then continue;
-	qoa_lms_update(@lms, reconstructed, dequantized);
-	slice := (slice shl 3) or quantized;
-	end;
+        current_error += error_sq;
+        if (current_rank > best_rank) then break;
+ 	qoa_lms_update(@lms, reconstructed, dequantized);
+ 	slice := (slice << 3) or quantized;
+        si+=channels;
+      until si>=slice_end;
+
       if (current_rank < best_rank) then
         begin
-	best_rank := current_rank;
+        best_rank := current_rank;
 	best_error := current_error;
 	best_slice := slice;
 	best_lms := lms;
-	best_scalefactor := scalefactor;
-	end;
-      end;
-    prev_scalefactor[c] := best_scalefactor;
-    qoa^.lms[c] := best_lms;
-    qoa^.error += best_error;
-
-                       	//* If this slice was shorter than QOA_SLICE_LEN, we have to left-
-			//shift all encoded data, to ensure the rightmost bits are the empty
-			//ones. This should only happen in the last frame of a file as all
-			//slices are completely filled otherwise. */
-     best_slice :=best_slice shl ((QOA_SLICE_LEN - slice_len) * 3);
-     qoa_write_u64(best_slice, bytes, @p);
+    	best_scalefactor := scalefactor;
+    	end;
     end;
+
+    			prev_scalefactor[c] := best_scalefactor;
+
+    			qoa^.lms[c] := best_lms;
+
+    				qoa^.error += best_error;
+
+
+    			//* If this slice was shorter than QOA_SLICE_LEN, we have to left-
+    			//shift all encoded data, to ensure the rightmost bits are the empty
+    			//ones. This should only happen in the last frame of a file as all
+    			//slices are completely filled otherwise. */
+    			best_slice := best_slice << ((QOA_SLICE_LEN - slice_len) * 3);
+    			qoa_write_u64(best_slice, bytes, @p);
+
   end;
+  sample_index += QOA_SLICE_LEN;
+until  sample_index >= frame_len;
 result:=p;
 end;
 
